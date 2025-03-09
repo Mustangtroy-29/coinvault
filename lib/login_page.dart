@@ -1,3 +1,4 @@
+import 'package:coinvault/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -66,7 +67,12 @@ class LoginPage extends StatelessWidget {
                   ),
                   minimumSize: Size(double.infinity, 50),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
                 child: Text("Login"),
               ),
               SizedBox(height: 10),
