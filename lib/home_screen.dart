@@ -71,7 +71,7 @@ class HomeScreen extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(1), // Glow color
-            blurRadius: 15, // Intensity of glow
+            blurRadius: 14, // Intensity of glow
             spreadRadius: 0.1, // Spread effect
           ),
         ],
