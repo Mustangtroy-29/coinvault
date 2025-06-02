@@ -1,116 +1,149 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF181818),
       appBar: AppBar(
-        title: Text("Expense Tracker", style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF181818),
         automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: Text("Overview", style: TextStyle(color: Colors.white)),
+        elevation: 0,
+        leading: Icon(Icons.menu, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Your Balance",
-              style: TextStyle(fontSize: 18, color: Colors.white70),
-            ),
-            SizedBox(height: 5),
-            Text(
-              "\$2,500.00",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildCard("Income", "\₹5,000.00", Color(0x1cff00)),
-                _buildCard("Expenses", "\₹2,500.00", Color(0xff0000)),
+                _buildStatCard("Income", "\$5,000", Color(0xFF2F4F39)),
+                _buildStatCard("Expenses", "\$2,000", Color(0xFF2F4F39)),
               ],
             ),
-            SizedBox(height: 20),
-            Text(
-              "Recent Transactions",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildTransaction("Groceries", "- \$50.00", Colors.red),
-                  _buildTransaction("Salary", "+ \$2,000.00", Colors.green),
-                  _buildTransaction("Subscription", "- \$15.99", Colors.red),
-                ],
-              ),
-            ),
+            SizedBox(height: 16),
+            _buildStatCard("Savings", "\$3,000", Color(0xFF2F4F39),
+                fullWidth: true),
+            SizedBox(height: 24),
+            Text("Recent Transactions",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
+            SizedBox(height: 16),
+            _buildTransactionTile(
+                Icons.shopping_cart, "Supermarket", "Groceries", "- \$150"),
+            _buildTransactionTile(
+                Icons.work, "Tech Corp", "Salary", "+ \$5,000"),
+            _buildTransactionTile(
+                Icons.restaurant, "Restaurant", "Dining", "- \$80"),
+            _buildTransactionTile(Icons.home, "Apartment", "Rent", "- \$1,500"),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {},
-        child: Icon(Icons.add, color: Colors.white),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Color(0xFF2F4F39),
+        ),
+        child: BottomNavigationBar(
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white54,
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Overview'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.list), label: 'Transactions'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.bar_chart), label: 'Budget'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Settings'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCard(String title, String amount, Color color) {
+  Widget _buildStatCard(String title, String amount, Color bgColor,
+      {bool fullWidth = false}) {
     return Container(
+      width: fullWidth
+          ? double.infinity
+          : MediaQuery.of(context).size.width / 2 - 24,
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(1), // Glow color
-            blurRadius: 14, // Intensity of glow
-            spreadRadius: 0.1, // Spread effect
-          ),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(color: Colors.white70)),
+          SizedBox(height: 8),
+          Text(amount,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20)),
         ],
       ),
-      child: Card(
-        color: Color(0xFF181818),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(title,
-                  style: TextStyle(
-                      color: Colors.white70, fontWeight: FontWeight.bold)),
-              SizedBox(height: 5),
-              Text(
-                amount,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildTransaction(String title, String amount, Color color) {
-    return Card(
-      color: Colors.black26,
-      child: ListTile(
-        title: Text(title, style: TextStyle(color: Colors.white)),
-        trailing: Text(amount,
-            style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+  Widget _buildTransactionTile(
+      IconData icon, String title, String subtitle, String amount) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Color(0xFF2F4F39),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.white),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
+                Text(subtitle, style: TextStyle(color: Colors.white54)),
+              ],
+            ),
+          ),
+          Text(amount,
+              style: TextStyle(
+                  color: amount.startsWith('+') ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold)),
+        ],
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: HomeScreen(),
+  ));
 }
